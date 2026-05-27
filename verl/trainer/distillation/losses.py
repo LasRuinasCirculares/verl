@@ -363,8 +363,16 @@ def compute_distillation_loss_reverse_kl_estimator(
     distillation_losses = kl_penalty(
         logprob=student_log_probs, ref_logprob=teacher_log_probs, kl_penalty=loss_config.loss_mode
     )
+    valid_student_log_probs = student_log_probs[response_mask_bool]
+    valid_teacher_log_probs = teacher_log_probs[response_mask_bool]
+
     # Since k1 can be negative, log the mean absolute loss.
     metrics = {
         "distillation/abs_loss": Metric(AggregationType.MEAN, distillation_losses[response_mask_bool].abs().mean()),
+        "distillation/student_mean_logp": Metric(AggregationType.MEAN, valid_student_log_probs.mean()),
+        "distillation/teacher_mean_logp": Metric(AggregationType.MEAN, valid_teacher_log_probs.mean()),
+        "distillation/teacher_student_mean_logp_gap": Metric(
+            AggregationType.MEAN, (valid_teacher_log_probs - valid_student_log_probs).mean()
+        ),
     }
     return distillation_losses, metrics

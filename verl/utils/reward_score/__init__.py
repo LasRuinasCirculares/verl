@@ -45,6 +45,10 @@ def default_compute_score(
         from . import gsm8k
 
         res = gsm8k.compute_score(solution_str, ground_truth)
+    elif data_source in ["MATH-500", "math500"]:
+        from . import boxed_math
+
+        res = boxed_math.compute_score(solution_str, ground_truth)
     elif data_source in ["lighteval/MATH", "DigitalLearningGmbH/MATH-lighteval", "HuggingFaceH4/MATH-500"]:
         from . import math_reward
 
@@ -56,6 +60,14 @@ def default_compute_score(
 
         # from . import math_verify
         # res = math_verify.compute_score(solution_str, ground_truth)
+    elif data_source == "AIME":
+        from . import boxed_math
+
+        res = boxed_math.compute_score(solution_str, ground_truth)
+    elif data_source in ["GPQA", "gpqa", "gpqa_diamond"]:
+        from . import gpqa
+
+        res = gpqa.compute_score(solution_str, ground_truth)
     elif data_source in ["math_dapo", "math", "math_dapo_reasoning"] or data_source.startswith("aime"):
         from . import math_dapo
 
